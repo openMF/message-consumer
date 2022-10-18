@@ -1,6 +1,7 @@
 package org.test.consumer.service;
 
 import lombok.AllArgsConstructor;
+import org.apache.fineract.avro.BulkMessageItemV1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,9 +62,32 @@ public class MessageConsumerServiceImpl implements MessageConsumerService{
             ByteBuffer byteBuffer = byteBufferConvertor.convert(message.getPayload());
             Method method = payLoadClass.getMethod("fromByteBuffer", ByteBuffer.class);
             Object payLoad = method.invoke(null, byteBuffer);
-            eventMessages.add(new EventMessageDTO(message.getEventId(),message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(),payLoad.toString()));
+            if(message.getType().equalsIgnoreCase("BulkBusinessEvent"))
+            {
+                Method methodToGetDatas = payLoad.getClass().getMethod("getDatas",null);
+                List<BulkMessageItemV1> bulkMessages = ( List<BulkMessageItemV1>)methodToGetDatas.invoke(payLoad);
+                StringBuilder bulkMessagePayload = new StringBuilder();
+                for(BulkMessageItemV1 bulkMessage : bulkMessages)
+                {
+                    EventMessageDTO bulkMessageData = retreiveBulkMessage(bulkMessage);
+                    bulkMessagePayload.append(bulkMessageData);
+                    bulkMessagePayload.append(System.lineSeparator());
+                }
+                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(), bulkMessagePayload.toString()));
+
+            }
+            else {
+                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(), payLoad.toString()));
+            }
         }
 
         return eventMessages;
+    }
+
+    private EventMessageDTO retreiveBulkMessage(BulkMessageItemV1 messageItem) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        Class messageBulkMessagePayLoad = Class.forName(messageItem.getDataschema());
+        Method methodForPayLoad = messageBulkMessagePayLoad.getMethod("fromByteBuffer", ByteBuffer.class);
+        Object payLoadBulkItem =  methodForPayLoad.invoke(null,messageItem.getData());
+        return new EventMessageDTO(messageItem.getId(), messageItem.getType(), messageItem.getCategory(), "", "", payLoadBulkItem.toString());
     }
 }

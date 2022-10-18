@@ -19,4 +19,16 @@ public class EventMessageDTO {
         this.createdAt = createdAt;
         this.payLoad = payLoad;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "eventId=" + eventId +
+                ", type='" + type + '\'' +
+                ", category='" + category + '\'' +
+                ", tenantId='" + tenantId + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", payLoad='" + payLoad + '\'' +
+                '}';
+    }
 }
