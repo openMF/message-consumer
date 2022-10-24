@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-activemq'
-	implementation 'org.apache.fineract:fineract-avro-schemas:0.0.0-bafe6bb9-SNAPSHOT'
+	implementation 'org.apache.fineract:fineract-avro-schemas:0.0.0-806fadab-SNAPSHOT'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-integration'
 	implementation 'org.springframework.integration:spring-integration-jms'
