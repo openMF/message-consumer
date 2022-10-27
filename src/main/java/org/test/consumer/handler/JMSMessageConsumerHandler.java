@@ -40,7 +40,8 @@ public class JMSMessageConsumerHandler implements MessageHandler {
     }
 
     private void saveMessage(MessageV1 messagePayload){
-        EventMessage message = new EventMessage(messagePayload.getId(),messagePayload.getType(),messagePayload.getCategory(),messagePayload.getDataschema(),messagePayload.getTenantId(),messagePayload.getCreatedAt(),byteBufferConvertor.convert(messagePayload.getData()));
+        EventMessage message = new EventMessage(messagePayload.getId(),messagePayload.getType(),messagePayload.getCategory(),messagePayload.getDataschema(),messagePayload.getTenantId(),messagePayload.getCreatedAt(),byteBufferConvertor.convert(messagePayload.getData()),
+            messagePayload.getBusinessDate());
         repository.save(message);
     }
 }

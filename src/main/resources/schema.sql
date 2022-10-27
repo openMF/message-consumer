@@ -7,4 +7,5 @@ CREATE TABLE event_message (
   created_at VARCHAR(100),
   tenant_id VARCHAR(100),
   payload BLOB NOT NULL,
-  category VARCHAR(100) NOT NULL);
+  category VARCHAR(100) NOT NULL,
+  business_date VARCHAR(100));

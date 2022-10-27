@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class MessageConsumerServiceImpl implements MessageConsumerService{
+public class MessageConsumerServiceImpl implements MessageConsumerService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageConsumerServiceImpl.class);
 
@@ -32,7 +32,7 @@ public class MessageConsumerServiceImpl implements MessageConsumerService{
         try {
             eventMessages = convertToReadableFormat(messages);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            logger.error("Unable to read message {}",e);
+            logger.error("Unable to read message {}", e);
         }
         return eventMessages;
     }
@@ -44,7 +44,7 @@ public class MessageConsumerServiceImpl implements MessageConsumerService{
         try {
             eventMessages = convertToReadableFormat(messages);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            logger.error("Unable to read message {}",e);
+            logger.error("Unable to read message {}", e);
         }
         return eventMessages;
     }
@@ -54,40 +54,42 @@ public class MessageConsumerServiceImpl implements MessageConsumerService{
         repository.deleteAll();
     }
 
-    private List<EventMessageDTO> convertToReadableFormat(List<EventMessage> messages) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException{
+    private List<EventMessageDTO> convertToReadableFormat(List<EventMessage> messages)
+        throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<EventMessageDTO> eventMessages = new ArrayList<>();
-        for(EventMessage message : messages)
-        {
+        for (EventMessage message : messages) {
             Class payLoadClass = Class.forName(message.getSchema());
             ByteBuffer byteBuffer = byteBufferConvertor.convert(message.getPayload());
             Method method = payLoadClass.getMethod("fromByteBuffer", ByteBuffer.class);
             Object payLoad = method.invoke(null, byteBuffer);
-            if(message.getType().equalsIgnoreCase("BulkBusinessEvent"))
-            {
-                Method methodToGetDatas = payLoad.getClass().getMethod("getDatas",null);
-                List<BulkMessageItemV1> bulkMessages = ( List<BulkMessageItemV1>)methodToGetDatas.invoke(payLoad);
+            if (message.getType().equalsIgnoreCase("BulkBusinessEvent")) {
+                Method methodToGetDatas = payLoad.getClass().getMethod("getDatas", null);
+                List<BulkMessageItemV1> bulkMessages = (List<BulkMessageItemV1>) methodToGetDatas.invoke(payLoad);
                 StringBuilder bulkMessagePayload = new StringBuilder();
-                for(BulkMessageItemV1 bulkMessage : bulkMessages)
-                {
-                    EventMessageDTO bulkMessageData = retreiveBulkMessage(bulkMessage);
+                for (BulkMessageItemV1 bulkMessage : bulkMessages) {
+                    EventMessageDTO bulkMessageData = retrieveBulkMessage(bulkMessage);
                     bulkMessagePayload.append(bulkMessageData);
                     bulkMessagePayload.append(System.lineSeparator());
                 }
-                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(), bulkMessagePayload.toString()));
+                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(),
+                    bulkMessagePayload.toString(),
+                    message.getBusinessDate()));
 
-            }
-            else {
-                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(), payLoad.toString()));
+            } else {
+                eventMessages.add(
+                    new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(), payLoad.toString(),
+                        message.getBusinessDate()));
             }
         }
 
         return eventMessages;
     }
 
-    private EventMessageDTO retreiveBulkMessage(BulkMessageItemV1 messageItem) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    private EventMessageDTO retrieveBulkMessage(BulkMessageItemV1 messageItem)
+        throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         Class messageBulkMessagePayLoad = Class.forName(messageItem.getDataschema());
         Method methodForPayLoad = messageBulkMessagePayLoad.getMethod("fromByteBuffer", ByteBuffer.class);
-        Object payLoadBulkItem =  methodForPayLoad.invoke(null,messageItem.getData());
-        return new EventMessageDTO(messageItem.getId(), messageItem.getType(), messageItem.getCategory(), "", "", payLoadBulkItem.toString());
+        Object payLoadBulkItem = methodForPayLoad.invoke(null, messageItem.getData());
+        return new EventMessageDTO(messageItem.getId(), messageItem.getType(), messageItem.getCategory(), "", "", payLoadBulkItem.toString(), "");
     }
 }

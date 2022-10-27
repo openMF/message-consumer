@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.test.consumer.data.EventMessageDTO;
 import org.test.consumer.service.MessageConsumerService;
+
 import java.util.List;
 
 @RestController
@@ -16,20 +17,17 @@ public class MessageConsumerController {
     private final MessageConsumerService service;
 
     @GetMapping("/consumer/getAllMessages")
-    public List<EventMessageDTO> getMessages()
-    {
+    public List<EventMessageDTO> getMessages() {
         return service.getMessages();
     }
 
     @GetMapping("/consumer/getMessagesByEventType/{eventType}")
-    public List<EventMessageDTO> getMessagesByType(@PathVariable("eventType") String eventType)
-    {
+    public List<EventMessageDTO> getMessagesByType(@PathVariable("eventType") String eventType) {
         return service.getMessagesByType(eventType);
     }
 
     @DeleteMapping("/consumer/deleteAllMessages")
-    public void deleteMessages()
-    {
+    public void deleteMessages() {
         service.deleteMessages();
     }
 

@@ -28,8 +28,10 @@ public class EventMessage {
     @Lob
     @Column(name="payload", columnDefinition="BLOB")
     private byte[] payload;
+    @Column(name="business_date")
+    private String businessDate;
 
-    public EventMessage(int eventId, String type, String category, String schema, String tenantId, String createdAt, byte[] payload) {
+    public EventMessage(int eventId, String type, String category, String schema, String tenantId, String createdAt, byte[] payload, String businessDate) {
         this.eventId = eventId;
         this.type = type;
         this.category = category;
@@ -37,5 +39,6 @@ public class EventMessage {
         this.tenantId = tenantId;
         this.createdAt = createdAt;
         this.payload = payload;
+        this.businessDate = businessDate;
     }
 }

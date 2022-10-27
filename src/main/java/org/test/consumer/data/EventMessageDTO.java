@@ -10,25 +10,28 @@ public class EventMessageDTO {
     private final String tenantId;
     private final String createdAt;
     private final String payLoad;
+    private final String businessDate;
 
-    public EventMessageDTO(int eventId, String type, String category, String tenantId, String createdAt, String payLoad) {
+    public EventMessageDTO(int eventId, String type, String category, String tenantId, String createdAt, String payLoad, String businessDate) {
         this.eventId = eventId;
         this.type = type;
         this.category = category;
         this.tenantId = tenantId;
         this.createdAt = createdAt;
         this.payLoad = payLoad;
+        this.businessDate = businessDate;
     }
 
     @Override
     public String toString() {
-        return "{" +
-                "eventId=" + eventId +
-                ", type='" + type + '\'' +
-                ", category='" + category + '\'' +
-                ", tenantId='" + tenantId + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", payLoad='" + payLoad + '\'' +
-                '}';
+        return "EventMessageDTO{" +
+            "eventId=" + eventId +
+            ", type='" + type + '\'' +
+            ", category='" + category + '\'' +
+            ", tenantId='" + tenantId + '\'' +
+            ", createdAt='" + createdAt + '\'' +
+            ", payLoad='" + payLoad + '\'' +
+            ", businessDate='" + businessDate + '\'' +
+            '}';
     }
 }
