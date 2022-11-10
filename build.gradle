@@ -29,7 +29,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.integration:spring-integration-test'
 
-	implementation 'org.apache.fineract:fineract-avro-schemas:0.0.0-6d20ef2b-SNAPSHOT'
+	implementation 'org.apache.fineract:fineract-avro-schemas:0.0.0-83982153-SNAPSHOT'
 }
 
 tasks.named('test') {
