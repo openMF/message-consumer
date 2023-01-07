@@ -1,6 +1,7 @@
 package org.test.consumer.config;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,30 +17,27 @@ import org.test.consumer.handler.JMSMessageConsumerHandler;
 import javax.jms.ConnectionFactory;
 
 @Configuration
-@Import(value = { MessageConsumerJMSBrokerConfiguration.class })
+@Import(value = {MessageConsumerJMSBrokerConfiguration.class})
 public class MessageConsumerJMSConfiguration {
     @Autowired
     private DirectChannel inputChannel;
-
 
     @Value("${queuename}")
     private String queueName;
 
     @Bean
     @ServiceActivator(inputChannel = "inputChannel")
-    public JMSMessageConsumerHandler jmsMessageConsumerHandler()
-    {
+    public JMSMessageConsumerHandler jmsMessageConsumerHandler() {
         return new JMSMessageConsumerHandler();
     }
 
     @Bean
-    public IntegrationFlow jmsMessageConsumerFlow(ActiveMQConnectionFactory connectionFactory)
-    {
+    public IntegrationFlow jmsMessageConsumerFlow(ActiveMQConnectionFactory connectionFactory) {
         return IntegrationFlows
-                .from(Jms.messageDrivenChannelAdapter(connectionFactory)
-                        .destination(queueName))
-                .channel("inputChannel")
-                .get();
+            .from(Jms.messageDrivenChannelAdapter(connectionFactory)
+                .destination(new ActiveMQTopic(queueName)))
+            .channel("inputChannel")
+            .get();
     }
 
 }
