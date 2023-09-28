@@ -1,9 +1,15 @@
 package org.test.consumer.domain;
 
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name="event_message")
@@ -11,7 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class EventMessage {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name="event_id")
     private int eventId;
@@ -24,14 +30,14 @@ public class EventMessage {
     @Column(name="tenant_id")
     private String tenantId;
     @Column(name="created_at")
-    private String createdAt;
+    private LocalDateTime createdAt;
     @Lob
     @Column(name="payload", columnDefinition="BLOB")
     private byte[] payload;
     @Column(name="business_date")
     private String businessDate;
 
-    public EventMessage(int eventId, String type, String category, String schema, String tenantId, String createdAt, byte[] payload, String businessDate) {
+    public EventMessage(int eventId, String type, String category, String schema, String tenantId, LocalDateTime createdAt, byte[] payload, String businessDate) {
         this.eventId = eventId;
         this.type = type;
         this.category = category;

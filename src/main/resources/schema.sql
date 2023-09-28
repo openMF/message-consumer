@@ -4,7 +4,7 @@ CREATE TABLE event_message (
   event_id INT NOT NULL,
   type VARCHAR(100) NOT NULL,
   data_schema VARCHAR(200) NOT NULL,
-  created_at VARCHAR(100),
+  created_at TIMESTAMP WITHOUT TIME ZONE,
   tenant_id VARCHAR(100),
   payload BLOB NOT NULL,
   category VARCHAR(100) NOT NULL,

@@ -1,27 +1,24 @@
 package org.test.consumer.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fineract.avro.BulkMessageItemV1;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.test.consumer.data.EventMessageDTO;
 import org.test.consumer.domain.EventMessage;
 import org.test.consumer.repository.EventMessageRepository;
 import org.test.consumer.utility.ByteBufferConvertor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @AllArgsConstructor
+@Slf4j
 public class MessageConsumerServiceImpl implements MessageConsumerService {
-
-    private static final Logger logger = LoggerFactory.getLogger(MessageConsumerServiceImpl.class);
-
     private final EventMessageRepository repository;
     private final ByteBufferConvertor byteBufferConvertor;
 
@@ -31,8 +28,9 @@ public class MessageConsumerServiceImpl implements MessageConsumerService {
         List<EventMessage> messages = repository.findAll();
         try {
             eventMessages = convertToReadableFormat(messages);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            logger.error("Unable to read message {}", e);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException e) {
+            log.error("Unable to read message", e);
         }
         return eventMessages;
     }
@@ -43,8 +41,9 @@ public class MessageConsumerServiceImpl implements MessageConsumerService {
         List<EventMessage> messages = repository.findByType(eventType);
         try {
             eventMessages = convertToReadableFormat(messages);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            logger.error("Unable to read message {}", e);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException e) {
+            log.error("Unable to read message", e);
         }
         return eventMessages;
     }
@@ -55,7 +54,7 @@ public class MessageConsumerServiceImpl implements MessageConsumerService {
     }
 
     private List<EventMessageDTO> convertToReadableFormat(List<EventMessage> messages)
-        throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<EventMessageDTO> eventMessages = new ArrayList<>();
         for (EventMessage message : messages) {
             Class payLoadClass = Class.forName(message.getSchema());
@@ -71,22 +70,26 @@ public class MessageConsumerServiceImpl implements MessageConsumerService {
                     bulkMessagePayload.append(bulkMessageData);
                     bulkMessagePayload.append(System.lineSeparator());
                 }
-                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(),
-                    bulkMessagePayload.toString(),
-                    message.getBusinessDate()));
+                eventMessages.add(new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), getCreatedAt(message),
+                        bulkMessagePayload.toString(),
+                        message.getBusinessDate()));
 
             } else {
                 eventMessages.add(
-                    new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), message.getCreatedAt(), payLoad.toString(),
-                        message.getBusinessDate()));
+                        new EventMessageDTO(message.getEventId(), message.getType(), message.getCategory(), message.getTenantId(), getCreatedAt(message), payLoad.toString(),
+                                message.getBusinessDate()));
             }
         }
 
         return eventMessages;
     }
 
+    private String getCreatedAt(EventMessage message) {
+        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(message.getCreatedAt());
+    }
+
     private EventMessageDTO retrieveBulkMessage(BulkMessageItemV1 messageItem)
-        throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+            throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         Class messageBulkMessagePayLoad = Class.forName(messageItem.getDataschema());
         Method methodForPayLoad = messageBulkMessagePayLoad.getMethod("fromByteBuffer", ByteBuffer.class);
         Object payLoadBulkItem = methodForPayLoad.invoke(null, messageItem.getData());
