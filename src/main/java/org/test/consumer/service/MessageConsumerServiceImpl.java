@@ -30,7 +30,7 @@ public class MessageConsumerServiceImpl implements MessageConsumerService {
             eventMessages = convertToReadableFormat(messages);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                  IllegalAccessException e) {
-            log.error("Unable to read message", e);
+            throw new RuntimeException("Unable to read messages", e);
         }
         return eventMessages;
     }
@@ -43,7 +43,7 @@ public class MessageConsumerServiceImpl implements MessageConsumerService {
             eventMessages = convertToReadableFormat(messages);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                  IllegalAccessException e) {
-            log.error("Unable to read message", e);
+            throw new RuntimeException("Unable to read messages", e);
         }
         return eventMessages;
     }
