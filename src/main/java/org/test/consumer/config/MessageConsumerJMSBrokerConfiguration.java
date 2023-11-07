@@ -13,10 +13,10 @@ public class MessageConsumerJMSBrokerConfiguration {
     @Value("${brokerurl}")
     private String brokerUrl;
 
-    @Value("${brokerusername")
+    @Value("${brokerusername}")
     private String brokerUserName;
 
-    @Value("${brokerpassword")
+    @Value("${brokerpassword}")
     private String brokerPassword;
 
     @Bean
