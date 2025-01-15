@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 public class EventMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     @Column(name="event_id")
-    private int eventId;
+    private Long eventId;
     @Column(name="type")
     private String type;
     @Column(name="category")
@@ -37,7 +37,7 @@ public class EventMessage {
     @Column(name="business_date")
     private String businessDate;
 
-    public EventMessage(int eventId, String type, String category, String schema, String tenantId, LocalDateTime createdAt, byte[] payload, String businessDate) {
+    public EventMessage(Long eventId, String type, String category, String schema, String tenantId, LocalDateTime createdAt, byte[] payload, String businessDate) {
         this.eventId = eventId;
         this.type = type;
         this.category = category;

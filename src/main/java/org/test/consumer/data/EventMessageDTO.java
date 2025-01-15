@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class EventMessageDTO {
-    private final int eventId;
+    private final Long eventId;
     private final String type;
     private final String category;
     private final String tenantId;
@@ -12,7 +12,7 @@ public class EventMessageDTO {
     private final String payLoad;
     private final String businessDate;
 
-    public EventMessageDTO(int eventId, String type, String category, String tenantId, String createdAt, String payLoad, String businessDate) {
+    public EventMessageDTO(Long eventId, String type, String category, String tenantId, String createdAt, String payLoad, String businessDate) {
         this.eventId = eventId;
         this.type = type;
         this.category = category;
