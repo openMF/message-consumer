@@ -10,11 +10,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.jms.dsl.Jms;
 import org.test.consumer.handler.JMSMessageConsumerHandler;
-
-import javax.jms.ConnectionFactory;
 
 @Configuration
 @Import(value = {MessageConsumerJMSBrokerConfiguration.class})
@@ -33,7 +30,7 @@ public class MessageConsumerJMSConfiguration {
 
     @Bean
     public IntegrationFlow jmsMessageConsumerFlow(ActiveMQConnectionFactory connectionFactory) {
-        return IntegrationFlows
+        return IntegrationFlow
             .from(Jms.messageDrivenChannelAdapter(connectionFactory)
                 .destination(new ActiveMQTopic(queueName)))
             .channel("inputChannel")
