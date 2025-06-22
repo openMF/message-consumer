@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fineract.avro.MessageV1;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
@@ -18,6 +19,7 @@ import org.test.consumer.utility.ByteBufferConvertor;
 
 @Component
 @Slf4j
+@Profile("jms")
 public class JMSMessageConsumerHandler implements MessageHandler {
     @Autowired
     private ByteBufferConvertor byteBufferConvertor;
