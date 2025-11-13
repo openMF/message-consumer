@@ -15,7 +15,7 @@ repositories {
 	}
 }
 
-ext.fineractVersion = '0.0.1259-7d0e98f'
+ext.fineractVersion = '0.0.1271-8cdaeb4'
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-activemq'
